@@ -14,7 +14,7 @@
 <meta property="og:description" content="Балалар даму орталығы, Алматы: үйірмелер, бағалар, кесте · Детский центр развития: кружки, цены, расписание">
 <meta property="og:url" content="https://bndprog79-cloud.github.io/juldyzdar/">
 <meta property="og:locale" content="kk_KZ">
-<meta property="og:image" content="https://bndprog79-cloud.github.io/juldyzdar/og-image.png?v=069aec9ffb">
+<meta property="og:image" content="https://bndprog79-cloud.github.io/juldyzdar/og-image.png?v=e7a739ee07">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -22,7 +22,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Jūldyzdar Akademiasy — үйірмелер мен бағалар">
 <meta name="twitter:description" content="Балалар даму орталығы, Алматы: үйірмелер, бағалар, кесте · Детский центр развития: кружки, цены, расписание">
-<meta name="twitter:image" content="https://bndprog79-cloud.github.io/juldyzdar/og-image.png?v=069aec9ffb">
+<meta name="twitter:image" content="https://bndprog79-cloud.github.io/juldyzdar/og-image.png?v=e7a739ee07">
 <!--OG:END-->
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>
@@ -652,7 +652,7 @@
     --font-head: "Nunito K", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     --font-body: "Nunito K", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     --hero-bg: #0D3A26; --hero-text: #FFFFFF; --hero-text-2: #C9DDD0; --hero-accent: #E5C868; --hero-accent-text: #E5C868; --hero-btn-text: #0D2E1E;
-    --hero-slogan: #F6EBC8; --logo-bg: #FBF6E9; --logo-gold: #8F7029;
+    --hero-slogan: #F6EBC8; --logo-bg: #FBF6E9; --logo-gold: #8F7029; --logo-shadow: rgba(4, 30, 18, .35);
     --status-bg: #1A4C35; --status-text: #BFE6CB;
     --badge-bg: #FBF1D3; --badge-text: #674D05; --gold-text: #765808;
     --d1-bg: #E9EFF8; --d1-text: #22466F; --d1-ill: #D5E2F2;
@@ -710,8 +710,27 @@
   .klangrow { display: flex; justify-content: flex-end; }
   .khero .klangrow .lang { position: static; }
   .khero .klangrow .lang button { min-height: 40px; }
-  .kfull { margin: 8px 0 0; }
-  .kfull .klf { display: block; width: 100%; height: auto; }
+  /* Рамка-«диплом» вокруг полного логотипа (19.3c): двойная линия (1,5 + 0,75 px) со срезанными углами и звёздочками в углах.
+     Рисунок рамки — маска из 8 частей (4 угла 22×22 и 4 кромки, растянутые по длине); цвет — фон var(--hero-accent),
+     #000 в SVG — только непрозрачность маски, не цвет. Логотип — ярче и с мягкой тенью var(--logo-shadow). */
+  .kfull { position: relative; margin: 8px 0 0; padding: 10px 16px; }
+  .kfull::before {
+    content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; pointer-events: none; background: var(--hero-accent);
+    --kf-img:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22' fill='none' stroke='%23000'%3E%3Cpath stroke-width='1.5' d='M.75 22V8.5L8.5.75H22'/%3E%3Cpath stroke-width='.75' d='M4.6 22V11.3L11.3 4.6H22'/%3E%3Cpath fill='%23000' stroke='none' d='M10.6 7.5L11.47 9.6L13.74 9.78L12.01 11.26L12.54 13.47L10.6 12.29L8.66 13.47L9.19 11.26L7.46 9.78L9.73 9.6Z'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22' fill='none' stroke='%23000'%3E%3Cg transform='matrix(-1 0 0 1 22 0)'%3E%3Cpath stroke-width='1.5' d='M.75 22V8.5L8.5.75H22'/%3E%3Cpath stroke-width='.75' d='M4.6 22V11.3L11.3 4.6H22'/%3E%3Cpath fill='%23000' stroke='none' d='M10.6 7.5L11.47 9.6L13.74 9.78L12.01 11.26L12.54 13.47L10.6 12.29L8.66 13.47L9.19 11.26L7.46 9.78L9.73 9.6Z'/%3E%3C/g%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22' fill='none' stroke='%23000'%3E%3Cg transform='matrix(1 0 0 -1 0 22)'%3E%3Cpath stroke-width='1.5' d='M.75 22V8.5L8.5.75H22'/%3E%3Cpath stroke-width='.75' d='M4.6 22V11.3L11.3 4.6H22'/%3E%3Cpath fill='%23000' stroke='none' d='M10.6 7.5L11.47 9.6L13.74 9.78L12.01 11.26L12.54 13.47L10.6 12.29L8.66 13.47L9.19 11.26L7.46 9.78L9.73 9.6Z'/%3E%3C/g%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22' fill='none' stroke='%23000'%3E%3Cg transform='matrix(-1 0 0 -1 22 22)'%3E%3Cpath stroke-width='1.5' d='M.75 22V8.5L8.5.75H22'/%3E%3Cpath stroke-width='.75' d='M4.6 22V11.3L11.3 4.6H22'/%3E%3Cpath fill='%23000' stroke='none' d='M10.6 7.5L11.47 9.6L13.74 9.78L12.01 11.26L12.54 13.47L10.6 12.29L8.66 13.47L9.19 11.26L7.46 9.78L9.73 9.6Z'/%3E%3C/g%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 22' preserveAspectRatio='none' fill='none' stroke='%23000'%3E%3Cpath stroke-width='1.5' d='M0 0.75H10'/%3E%3Cpath stroke-width='.75' d='M0 4.6H10'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 22' preserveAspectRatio='none' fill='none' stroke='%23000'%3E%3Cpath stroke-width='1.5' d='M0 21.25H10'/%3E%3Cpath stroke-width='.75' d='M0 17.4H10'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 10' preserveAspectRatio='none' fill='none' stroke='%23000'%3E%3Cpath stroke-width='1.5' d='M0.75 0V10'/%3E%3Cpath stroke-width='.75' d='M4.6 0V10'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 10' preserveAspectRatio='none' fill='none' stroke='%23000'%3E%3Cpath stroke-width='1.5' d='M21.25 0V10'/%3E%3Cpath stroke-width='.75' d='M17.4 0V10'/%3E%3C/svg%3E");
+    --kf-pos: 0 0, 100% 0, 0 100%, 100% 100%, 50% 0, 50% 100%, 0 50%, 100% 50%;
+    --kf-size: 22px 22px, 22px 22px, 22px 22px, 22px 22px, calc(100% - 44px) 22px, calc(100% - 44px) 22px, 22px calc(100% - 44px), 22px calc(100% - 44px);
+    -webkit-mask-image: var(--kf-img); -webkit-mask-position: var(--kf-pos); -webkit-mask-size: var(--kf-size); -webkit-mask-repeat: no-repeat;
+    mask-image: var(--kf-img); mask-position: var(--kf-pos); mask-size: var(--kf-size); mask-repeat: no-repeat;
+  }
+  .kfull .klf { position: relative; display: block; width: 100%; height: auto; filter: brightness(1.12) drop-shadow(0 2px 4px var(--logo-shadow)); }
   .kfull-sub { margin: 6px 0 0; font-size: 13px; }
   .khero .hours { margin: 0; text-align: left; }
   /* Статус — всегда одной строкой («Закрыто · откроется завтра в 08:00» помещается и на 320 px) */
