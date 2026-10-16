@@ -14,7 +14,7 @@
 <meta property="og:description" content="Балалар даму орталығы, Алматы: үйірмелер, бағалар, кесте · Детский центр развития: кружки, цены, расписание">
 <meta property="og:url" content="https://bndprog79-cloud.github.io/juldyzdar/">
 <meta property="og:locale" content="kk_KZ">
-<meta property="og:image" content="https://bndprog79-cloud.github.io/juldyzdar/og-image.png?v=e7a739ee07">
+<meta property="og:image" content="https://bndprog79-cloud.github.io/juldyzdar/og-image.png?v=5e370b4fef">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -22,7 +22,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Jūldyzdar Akademiasy — үйірмелер мен бағалар">
 <meta name="twitter:description" content="Балалар даму орталығы, Алматы: үйірмелер, бағалар, кесте · Детский центр развития: кружки, цены, расписание">
-<meta name="twitter:image" content="https://bndprog79-cloud.github.io/juldyzdar/og-image.png?v=e7a739ee07">
+<meta name="twitter:image" content="https://bndprog79-cloud.github.io/juldyzdar/og-image.png?v=5e370b4fef">
 <!--OG:END-->
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>
@@ -706,14 +706,14 @@
   .khero .lang { position: absolute; top: calc(14px + env(safe-area-inset-top)); right: var(--kpad); z-index: 2; background: transparent; border: 1.5px solid var(--hero-text-2); }
   .khero .lang button { min-width: 40px; min-height: 32px; padding: 0 10px; color: var(--hero-text); font-weight: 800; font-family: var(--font-body); }
   .khero .lang button[aria-pressed="true"] { background: var(--hero-accent); color: var(--hero-btn-text); }
-  /* Полный логотип (assets/logo-full.webp): KZ/RU — своей строкой справа (высота нажатия 40 px), логотип во всю ширину ниже */
-  .klangrow { display: flex; justify-content: flex-end; }
-  .khero .klangrow .lang { position: static; }
-  .khero .klangrow .lang button { min-height: 40px; }
+  /* Полный логотип (assets/logo-full.webp) — в самом верху шапки; под ним одна строка: подпись слева, KZ/RU справа (нажатие 40 px) */
+  .ksubrow { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 8px 0 0; }
+  .khero .ksubrow .lang { position: static; flex: none; margin-left: auto; }
+  .khero .ksubrow .lang button { min-height: 40px; }
   /* Рамка-«диплом» вокруг полного логотипа (19.3c): двойная линия (1,5 + 0,75 px) со срезанными углами и звёздочками в углах.
      Рисунок рамки — маска из 8 частей (4 угла 22×22 и 4 кромки, растянутые по длине); цвет — фон var(--hero-accent),
      #000 в SVG — только непрозрачность маски, не цвет. Логотип — ярче и с мягкой тенью var(--logo-shadow). */
-  .kfull { position: relative; margin: 8px 0 0; padding: 10px 16px; }
+  .kfull { position: relative; margin: 0; padding: 10px 16px; }
   .kfull::before {
     content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; pointer-events: none; background: var(--hero-accent);
     --kf-img:
@@ -731,7 +731,7 @@
     mask-image: var(--kf-img); mask-position: var(--kf-pos); mask-size: var(--kf-size); mask-repeat: no-repeat;
   }
   .kfull .klf { position: relative; display: block; width: 100%; height: auto; filter: brightness(1.12) drop-shadow(0 2px 4px var(--logo-shadow)); }
-  .kfull-sub { margin: 6px 0 0; font-size: 13px; }
+  .kfull-sub { flex: 1 1 auto; min-width: 0; margin: 0; font-size: 16px; font-weight: 700; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .khero .hours { margin: 0; text-align: left; }
   /* Статус — всегда одной строкой («Закрыто · откроется завтра в 08:00» помещается и на 320 px) */
   .khero .hours .status {
@@ -972,6 +972,10 @@
 
   @media (max-width: 359px) {
     .kslogan { font-size: 20px; }
+    /* Подпись и KZ/RU в одну строку: 16 px на 320 px не помещается (нужно 196 px, есть 169) — 14 px и кнопки поуже, но не меньше 40 px */
+    .ksubrow { gap: 6px; }
+    .kfull-sub { font-size: 14px; }
+    .khero .ksubrow .lang button { padding: 0 8px; }
     .khero .hours .status { font-size: 12.5px; gap: 5px; padding: 0 8px; }
     .kact { font-size: 13px; }
     .kact .ico { display: none; }
@@ -1023,7 +1027,7 @@ const priceData = {
 
   company: {
     name: "Jūldyzdar Akademiasy",
-    subtitle: { ru: "Жұлдыздар академиясы · детский центр развития", kk: "Жұлдыздар академиясы · балалар даму орталығы" },
+    subtitle: { ru: "Детский центр развития", kk: "Балалар даму орталығы" },
     slogan: { ru: "Здесь рождаются маленькие звёзды", kk: "Мұнда кішкентай жұлдыздар туады" },
     address: { ru: "Алматы, ул. Жунисова, 4/2", kk: "Алматы, Жүнісов к-сі, 4/2" },
     phone: "77078770690",
@@ -3295,15 +3299,15 @@ function renderKidsHome(screen) {
   const hero = el('header', 'hero khero');
   hero.appendChild(svgNode(SKY));
   if (ILLUSTRATIONS['logo-full']) {
-    // Полный логотип центра (assets/logo-full.webp) во всю ширину; KZ/RU — отдельной строкой справа над ним
-    const lrow = el('div', 'klangrow');
-    lrow.appendChild(langSwitch());
-    hero.appendChild(lrow);
+    // Полный логотип центра (assets/logo-full.webp) во всю ширину в самом верху; ниже — подпись слева и KZ/RU справа одной строкой
     const h1 = el('h1', 'kname kfull');
     h1.innerHTML = ILLUSTRATIONS['logo-full'];
     h1.firstChild.alt = company.name;
     hero.appendChild(h1);
-    if (company.subtitle) hero.appendChild(el('p', 'ksub kfull-sub', loc(company.subtitle)));
+    const srow = el('div', 'ksubrow');
+    if (company.subtitle) srow.appendChild(el('p', 'ksub kfull-sub', loc(company.subtitle)));
+    srow.appendChild(langSwitch());
+    hero.appendChild(srow);
   } else {
     hero.appendChild(langSwitch());
     const brand = el('div', 'kbrand');
