@@ -1634,6 +1634,18 @@ const priceData = {
           price: { amount: 40000, unit: "month" },   // [?] 40 000 ₸ в месяц за 2 индивидуальных занятия в неделю?
           schedule: { tue: ["09:40–10:20", "10:20–11:00", "11:00–11:40", "16:20–17:00", "17:00–17:40", "17:40–18:20", "18:20–19:00", "19:00–19:40"],
             sat: ["09:00–09:40", "09:40–10:20", "10:20–11:00", "11:00–11:40", "14:20–15:00", "15:00–15:40", "15:40–16:20", "16:20–17:00", "17:00–17:40"] }
+        },
+        {
+          id: "journalism",
+          name: { ru: "Журналистика", kk: "Журналистика" },
+          age: [6, 17], duration: 60, perWeek: 2,   // ответ центра 20.10 («Journalism course»): 6–17 лет, Вт и Чт по 1 ч
+          price: { amount: 30000, unit: "month" },
+          groups: [
+            { id: "09", name: { ru: "09:00", kk: "09:00" }, schedule: { tue: ["09:00–10:00"], thu: ["09:00–10:00"] } },
+            { id: "10", name: { ru: "10:00", kk: "10:00" }, schedule: { tue: ["10:00–11:00"], thu: ["10:00–11:00"] } },
+            { id: "15", name: { ru: "15:00", kk: "15:00" }, schedule: { tue: ["15:00–16:00"], thu: ["15:00–16:00"] } },
+            { id: "16", name: { ru: "16:00", kk: "16:00" }, schedule: { tue: ["16:00–17:00"], thu: ["16:00–17:00"] } }
+          ]
         }
       ]
     }
@@ -4062,7 +4074,7 @@ fillHoursPanel = function (panel, date) {
 // Подменяет: clubArt (строки, «Танымал», программа), renderItem (листание в карточке), renderKidsHome (плитки направлений,
 // альбом после «Танымал»), parseRoute и renderHome (экран #/photos — все фото). Просмотр на весь экран — окно поверх #app,
 // запись в истории (как окно QR): системная «Назад» его закрывает.
-const KIDS_PHOTOS = {"f":[["prodlenka-1","50 62"],["prodlenka-2","55 50"],["mektep-1","45 55"],["razvivashka-1","50 55"],["razvivashka-2","45 45"],["english-1","50 58"],["logo-group-1","45 55"],["karate-1","50 55"],["chess-1","45 62"],["robot-1","45 62"],["kids-dance-1","50 55"],["kids-dance-2","55 55"],["izo-1","45 62"],["dombyra-1","50 62"],["piano-1","55 50"]],"c":{"bilim/prodlenka":[0,1],"bilim/mektep":[2],"bilim/razvivashka":[3,4],"bilim/english":[5],"bilim/logo-group":[6],"bilim/logo":[6],"sport/karate":[7],"sport/chess":[8],"sport/robot":[9],"bi/kids-dance":[10,11],"shyg/izo":[12],"shyg/dombyra":[13],"shyg/piano":[14]},"d":{"bilim":5,"sport":7,"bi":11,"shyg":12}};
+const KIDS_PHOTOS = {"f":[["prodlenka-1","50 62"],["prodlenka-2","55 50"],["mektep-1","45 55"],["razvivashka-1","50 55"],["razvivashka-2","45 45"],["english-1","50 58"],["logo-group-1","45 55"],["karate-1","50 55"],["chess-1","45 62"],["robot-1","45 62"],["kids-dance-1","50 55"],["kids-dance-2","55 55"],["izo-1","45 62"],["dombyra-1","50 62"],["piano-1","55 50"],["journalism-1","55 60"],["journalism-2","55 58"]],"c":{"bilim/prodlenka":[0,1],"bilim/mektep":[2],"bilim/razvivashka":[3,4],"bilim/english":[5],"bilim/logo-group":[6],"bilim/logo":[6],"sport/karate":[7],"sport/chess":[8],"sport/robot":[9],"bi/kids-dance":[10,11],"shyg/izo":[12],"shyg/dombyra":[13],"shyg/piano":[14],"shyg/journalism":[15,16]},"d":{"bilim":5,"sport":7,"bi":11,"shyg":12}};
 const ALBUM_PREVIEW = 5;
 
 function kpSrc(i, suffix) { return 'photos/' + encodeURIComponent(KIDS_PHOTOS.f[i][0] + suffix) + '.webp'; }
