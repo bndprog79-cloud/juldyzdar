@@ -1073,6 +1073,27 @@
   .kclub.has-photo .kt { position: relative; z-index: 2; }
   .kclub.has-photo b, .kclub.has-photo small, .kclub.has-photo .pr { color: var(--kp-on-photo); text-shadow: 0 1px 2px var(--kp-text-shadow); }
   .kpicbox.has-photo { --kp-ratio: 4 / 5; }
+
+/* ── кнопка «Назад» внизу (engine/kids/back.css — только с settings.backButton: true) ──
+     Круг 52 px: изумруд шапки, тонкий золотой ободок, стрелка шампанью (--hero-slogan, контраст AA на --hero-bg).
+     Без панели — плавает внизу слева по краю колонки (448 px), экрану — отступ снизу, чтобы последнюю карточку можно было
+     поднять выше кнопки; в панели — квадрат 48 px слева, как «Ашу» справа. Просмотр фото (.kview, z-index 100) — поверх. */
+  .kback {
+    position: fixed; z-index: 11; left: max(16px, env(safe-area-inset-left), calc(50% - 224px));
+    bottom: calc(16px + env(safe-area-inset-bottom)); width: 52px; height: 52px; padding: 0; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; flex: none; cursor: pointer;
+    background: var(--hero-bg); color: var(--hero-slogan); border: 1.5px solid var(--gold); box-shadow: var(--shadow);
+    animation: fadeIn .3s var(--ease) backwards; transition: opacity .2s var(--ease), visibility .2s, transform .18s var(--ease);
+  }
+  .kback .ico { width: 26px; height: 26px; stroke-width: 2.4; margin-left: -2px; }
+  .kback.is-hidden { opacity: 0; visibility: hidden; }
+  .kback:active { transform: scale(.94); }
+  .kback.in-bar { position: static; width: 48px; height: 48px; border-radius: 14px; box-shadow: none; animation: none; }
+  .screen.has-kback { padding-bottom: calc(88px + env(safe-area-inset-bottom)); }
+  @media (prefers-reduced-motion: reduce) {
+    .kback { transition: none; }
+    .kback:active { transform: none; }
+  }
 </style>
 </head>
 <body>
@@ -4406,6 +4427,61 @@ document.addEventListener('focusin', function (e) {
 });
 // Страницу перезагрузили с открытым просмотром — убрать лишнюю запись истории (как у окна QR)
 if (history.state && history.state.kview) history.back();
+
+// ─────────── Кнопка «Назад» внизу (settings.backButton: true) ───────────
+// Вставляет сборка (tools/build.js, место KIDS_BACK в конце kids.js) только детскому центру с backButton; без настройки кода нет.
+// Экраны направления, «Ересектерге», кружка, «Все фото» и программы (на главной кнопки нет). Круг слева:
+//   есть нижняя панель (программа, «Пробное + Добавить», «Записаться») — кнопка в самой панели слева, видна всегда;
+//   нет панели — плавает внизу слева и появляется, когда верхняя «‹ Басты бет» ушла за верх экрана.
+// Нажатие = шаг назад по истории (как системная «Назад»); если сайт открыли сразу на этом экране — переход на главную,
+// с сайта не уходим. Просмотр фото на весь экран (.kview) лежит поверх кнопки.
+let kbackWatch = null;
+
+function kbackClick(top) {
+  if (routeKeys[currentIdx - 1]) history.back();
+  else top.click();
+}
+
+const renderKback = render;
+render = function (route, direction) {
+  if (kbackWatch) { kbackWatch(); kbackWatch = null; }
+  renderKback(route, direction);
+  if (route.screen === 'home') return;
+  const app = document.getElementById('app');
+  const screen = app.querySelector('.screen');
+  const top = screen.querySelector('.back');
+  if (!top) return;
+  const btn = el('button', 'kback');
+  btn.type = 'button';
+  btn.setAttribute('aria-label', t('back'));
+  btn.appendChild(svgNode(ICONS.back));
+  btn.addEventListener('click', function () { kbackClick(top); });
+  const inner = app.querySelector('.kbar .kbar-in');
+  if (inner) {
+    btn.classList.add('in-bar');
+    inner.insertBefore(btn, inner.firstChild);
+    return;
+  }
+  screen.classList.add('has-kback');
+  btn.classList.add('is-hidden');
+  if (!direction) btn.style.animation = 'none';
+  app.appendChild(btn);
+  // Видна, когда верхняя ссылка целиком выше экрана
+  function show(gone) { btn.classList.toggle('is-hidden', !gone); }
+  if (window.IntersectionObserver) {
+    const io = new IntersectionObserver(function (es) {
+      const e = es[es.length - 1];
+      show(!e.isIntersecting && e.boundingClientRect.bottom <= 0);
+    });
+    io.observe(top);
+    kbackWatch = function () { io.disconnect(); };
+  } else {
+    const onScroll = function () { show(top.getBoundingClientRect().bottom <= 0); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    kbackWatch = function () { window.removeEventListener('scroll', onScroll); };
+  }
+};
 
 init();
 </script>
