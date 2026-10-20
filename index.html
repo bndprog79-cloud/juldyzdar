@@ -987,6 +987,92 @@
   @media (prefers-reduced-motion: reduce) {
     .kclub, .kage { transition: none; }
   }
+
+/* ── Фото кружков (settings.clubPhotos; engine/kids/photos.js). Цвета — переменные: затемнение под белым текстом, окно просмотра ── */
+  :root {
+    --kp-on-photo: #FFFFFF; --kp-scrim: rgba(5, 30, 19, .86); --kp-scrim-0: rgba(5, 30, 19, 0); --kp-text-shadow: rgba(0, 0, 0, .45);
+    --kp-dot: rgba(255, 255, 255, .6); --kp-dot-on: #FFFFFF; --kp-btn: rgba(5, 30, 19, .55);
+    --kv-bg: #08140E; --kv-text: #FFFFFF; --kv-btn: rgba(255, 255, 255, .16);
+  }
+  .has-photo { position: relative; }
+  .ill.has-photo > .kph, .kdph > .kph { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; display: block; }
+  .kdph { display: block; overflow: hidden; }
+
+  /* миниатюры: строка списка — скруглённый прямоугольник, программа ребёнка — круг */
+  .klist .row .ill-mini.has-photo { overflow: hidden; }
+  .kpc .ill-mini.has-photo { width: 52px; height: 52px; border-radius: 50%; overflow: hidden; margin: 0 6px; box-shadow: 0 0 0 2px var(--gold); }
+
+  /* ── карточка кружка: листание ── */
+  .kpicbox.has-photo > .ill { display: none; }
+  .kslider { position: relative; }
+  .kslides { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
+  .kslides::-webkit-scrollbar { display: none; }
+  .kslide { flex: none; width: 100%; aspect-ratio: var(--kp-ratio, 4 / 5); scroll-snap-align: start; padding: 0; border: 0; margin: 0; background: var(--tile-bg); cursor: zoom-in; display: block; }
+  .kslide .kph { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .kdots { position: absolute; left: 0; right: 0; bottom: 10px; display: flex; justify-content: center; gap: 6px; z-index: 2; pointer-events: none; }
+  .kdots span { width: 7px; height: 7px; border-radius: 4px; background: var(--kp-dot); box-shadow: 0 0 3px var(--kp-text-shadow); transition: width .2s; }
+  .kdots span.on { width: 18px; background: var(--kp-dot-on); }
+  .kslider.one .kdots, .kslider.one .karrow, .kview.one .karrow { display: none; }
+  .karrow { display: none; position: absolute; top: 50%; margin-top: -22px; width: 44px; height: 44px; border-radius: 50%; border: 0; z-index: 3;
+    background: var(--kp-btn); color: var(--kp-on-photo); align-items: center; justify-content: center; cursor: pointer; }
+  .karrow .ico { width: 24px; height: 24px; }
+  .karrow:disabled { opacity: .3; cursor: default; }
+  .kprev { left: 10px; }
+  .knext { right: 10px; }
+  @media (hover: hover) and (pointer: fine) {
+    .karrow { display: flex; }
+  }
+  .kpicbox .khit { z-index: 3; }
+
+  /* ── альбом на главной и экран «Все фото» ── */
+  .kalb-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .kalb-cell { position: relative; aspect-ratio: 1 / 1; padding: 0; border: 0; margin: 0; border-radius: 14px; overflow: hidden; background: var(--surface-2); cursor: zoom-in; }
+  .kalb-cell .kph { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .kalb-all { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; aspect-ratio: 1 / 1; border-radius: 14px;
+    background: var(--accent-strong); color: var(--on-accent); text-decoration: none; text-align: center; padding: 6px; }
+  .kalb-all b { font: 800 14.5px/1.15 var(--font-head); }
+  .kalb-all small { font-size: 12.5px; font-weight: 700; }
+  .kalb-all .ico { width: 20px; height: 20px; }
+  .kphotos-head h1 { font: 800 26px/1.1 var(--font-head); margin: 4px 0 2px; }
+  .kphotos-head p { color: var(--text-2); font-size: 14px; font-weight: 700; margin: 0 0 12px; }
+  .kphotos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-bottom: 24px; }
+  .kphotos-grid .kalb-cell { border-radius: 10px; }
+
+  /* ── просмотр на весь экран ── */
+  .kview { position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 100; color: var(--kv-text); }
+  .kview::before { content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: var(--kv-bg); opacity: var(--kv-fade, 1); }
+  .kv-stage { position: absolute; top: 0; right: 0; bottom: 0; left: 0; }
+  .kv-track { display: flex; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; touch-action: pan-x; overscroll-behavior: contain; }
+  .kv-track::-webkit-scrollbar { display: none; }
+  .kv-slide { flex: none; width: 100%; height: 100%; scroll-snap-align: center; display: flex; align-items: center; justify-content: center;
+    padding: calc(60px + env(safe-area-inset-top)) 0 calc(76px + env(safe-area-inset-bottom)); box-sizing: border-box; }
+  .kv-img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+  .kv-img.is-broken { display: none; }
+  .kv-top { position: absolute; top: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; z-index: 2;
+    padding: calc(8px + env(safe-area-inset-top)) 10px 8px 18px; }
+  .kv-count { font-size: 15px; font-weight: 800; }
+  .kv-close { width: 44px; height: 44px; border-radius: 50%; background: var(--kv-btn); color: var(--kv-text); border: 0; }
+  .kv-cap { position: absolute; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 2; max-width: calc(100% - 32px);
+    display: inline-flex; align-items: center; gap: 4px; min-height: 44px; padding: 0 12px 0 18px; border-radius: 22px; background: var(--kv-btn);
+    color: var(--kv-text); text-decoration: none; font: 800 15px/1.2 var(--font-head); white-space: nowrap; }
+  .kv-cap span { overflow: hidden; text-overflow: ellipsis; }
+  .kv-cap .ico { flex: none; width: 20px; height: 20px; }
+  .kv-cap[hidden] { display: none; }
+
+  /* ── фото во всю плитку («Танымал», направления): снизу затемнение, название белым ── */
+  .kdirs .cat-card.has-photo { min-height: 128px; padding: 0; align-items: flex-end; overflow: hidden; border: 0; border-top: 3px solid var(--gold); }
+  .kdirs .cat-card.has-photo .kdph { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+  .kdirs .cat-card.has-photo .kdph::after,
+  .kclub.has-photo .ill::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 75%; z-index: 1;
+    background: linear-gradient(to top, var(--kp-scrim) 0, var(--kp-scrim) 38%, var(--kp-scrim-0) 100%); }
+  .kdirs .cat-card.has-photo .kib { display: none; }
+  .kdirs .cat-card.has-photo .body { position: relative; z-index: 2; padding: 10px 10px 9px; }
+  .kdirs .cat-card.has-photo .name, .kdirs .cat-card.has-photo .count { color: var(--kp-on-photo); text-shadow: 0 1px 2px var(--kp-text-shadow); opacity: 1; }
+  .kclub.has-photo { position: relative; min-height: 212px; justify-content: flex-end; }
+  .kclub.has-photo .ill { position: absolute; top: 0; left: 0; width: 100%; height: 100%; aspect-ratio: auto; }
+  .kclub.has-photo .kt { position: relative; z-index: 2; }
+  .kclub.has-photo b, .kclub.has-photo small, .kclub.has-photo .pr { color: var(--kp-on-photo); text-shadow: 0 1px 2px var(--kp-text-shadow); }
+  .kpicbox.has-photo { --kp-ratio: 4 / 5; }
 </style>
 </head>
 <body>
@@ -1049,7 +1135,8 @@ const priceData = {
       },
       exceptions: []
     },
-    // Пробное занятие: enabled — показывать баннер и кнопку; free: true — бесплатно (или price: 3000); note — пометка
+    // Пробное занятие: enabled — показывать баннер и кнопку; free: true — без цены в заголовке (или price: 3000); note — пометка.
+    // Центр не подтвердил, что пробное без оплаты: заголовок trialTitleFree — просто «Пробное занятие» / «Сынақ сабағы» (19.4).
     trial: { enabled: true, free: true, note: { ru: "[?] уточняется", kk: "[?] нақтыланады" } },
     // Скидки (необязательно): discounts: { secondClub: 10, secondChild: 10 } — проценты. [?] Нет данных — не показываются
     // Пометка под расписанием в карточке кружка
@@ -1136,7 +1223,7 @@ const priceData = {
       years: ["год", "года", "лет"],
       adult: "Взрослые",
       adultTitle: "Для взрослых и мам",
-      trialTitleFree: "Бесплатное пробное занятие",
+      trialTitleFree: "Пробное занятие",
       trialTitlePaid: "Пробное занятие — {price}",
       trialText: "Приходите с ребёнком и познакомьтесь с педагогом",
       trialBtn: "Записаться",
@@ -1196,7 +1283,14 @@ const priceData = {
       msgTotal: "Итого в месяц: {sum}.",
       msgDiscount: "Скидка: {list}.",
       msgTrialHello: "Здравствуйте! Хочу записать ребёнка на пробное занятие.",
-      msgTrialClub: "Здравствуйте! Хочу записать ребёнка на пробное занятие: {name}."
+      msgTrialClub: "Здравствуйте! Хочу записать ребёнка на пробное занятие: {name}.",
+      // ── фото кружков (engine/kids/photos.js, settings.clubPhotos) ──
+      albumTitle: "Наш центр",
+      albumAll: "Все фото",
+      albumCount: "{n} фото",
+      photoOf: "{n} из {total}",
+      photoPrev: "Предыдущее фото",
+      photoNext: "Следующее фото"
     },
     kk: {
       langLabel: "KZ",
@@ -1266,7 +1360,7 @@ const priceData = {
       years: ["жас", "жас", "жас"],
       adult: "Ересектер",
       adultTitle: "Ересектерге және аналарға",
-      trialTitleFree: "Тегін сынақ сабағы",
+      trialTitleFree: "Сынақ сабағы",
       trialTitlePaid: "Сынақ сабағы — {price}",
       trialText: "Балаңызбен келіп, педагогпен танысыңыз",
       trialBtn: "Жазылу",
@@ -1326,7 +1420,14 @@ const priceData = {
       msgTotal: "Айына барлығы: {sum}.",
       msgDiscount: "Жеңілдік: {list}.",
       msgTrialHello: "Сәлеметсіз бе! Баланы сынақ сабағына жазғым келеді.",
-      msgTrialClub: "Сәлеметсіз бе! Баланы сынақ сабағына жазғым келеді: {name}."
+      msgTrialClub: "Сәлеметсіз бе! Баланы сынақ сабағына жазғым келеді: {name}.",
+      // ── фото кружков (engine/kids/photos.js, settings.clubPhotos) ──
+      albumTitle: "Біздің орталық",
+      albumAll: "Барлық фото",
+      albumCount: "{n} фото",
+      photoOf: "{n} / {total}",
+      photoPrev: "Алдыңғы фото",
+      photoNext: "Келесі фото"
     }
   },
 
@@ -3931,6 +4032,380 @@ fillHoursPanel = function (panel, date) {
   fillHoursPanelSalon(panel, date);
   if (panel.firstChild) panel.firstChild.textContent = t('hoursTitle');
 };
+
+// ─────────── Фото кружков (settings.clubPhotos: true) ───────────
+// Вставляет сборка (tools/build.js, место KIDS_PHOTOS в конце kids.js) только детскому центру с фото; без настройки кода нет.
+// Фото — файлы dist/<id>/photos/ (tools/kids-photos.js, список — clients/<id>/source/foto-spisok.md), в коде только карта:
+//   f — фото по порядку списка [имя, "x y" фокус в %]; c — «направление/кружок» → номера фото; d — направление → номер фото плитки.
+// Фото всегда поверх рисунка: не загрузилось (нет сети и копии) — снова виден рисунок кружка или иконка направления.
+// Подменяет: clubArt (строки, «Танымал», программа), renderItem (листание в карточке), renderKidsHome (плитки направлений,
+// альбом после «Танымал»), parseRoute и renderHome (экран #/photos — все фото). Просмотр на весь экран — окно поверх #app,
+// запись в истории (как окно QR): системная «Назад» его закрывает.
+const KIDS_PHOTOS = {"f":[["prodlenka-1","50 62"],["prodlenka-2","55 50"],["mektep-1","45 55"],["razvivashka-1","50 55"],["razvivashka-2","45 45"],["english-1","50 58"],["logo-group-1","45 55"],["karate-1","50 55"],["chess-1","45 62"],["robot-1","45 62"],["kids-dance-1","50 55"],["kids-dance-2","55 55"],["izo-1","45 62"],["dombyra-1","50 62"],["piano-1","55 50"]],"c":{"bilim/prodlenka":[0,1],"bilim/mektep":[2],"bilim/razvivashka":[3,4],"bilim/english":[5],"bilim/logo-group":[6],"bilim/logo":[6],"sport/karate":[7],"sport/chess":[8],"sport/robot":[9],"bi/kids-dance":[10,11],"shyg/izo":[12],"shyg/dombyra":[13],"shyg/piano":[14]},"d":{"bilim":5,"sport":7,"bi":11,"shyg":12}};
+const ALBUM_PREVIEW = 5;
+
+function kpSrc(i, suffix) { return 'photos/' + encodeURIComponent(KIDS_PHOTOS.f[i][0] + suffix) + '.webp'; }
+function kpFocus(i) { return KIDS_PHOTOS.f[i][1].replace(' ', '% ') + '%'; }
+function clubPhotos(cat, item) {
+  const list = KIDS_PHOTOS.c[cat.id + '/' + item.id];
+  return list ? list.slice() : [];
+}
+
+// Картинка фото: lazy (src сразу) или по запросу (src позже, load()); fail — не загрузилась
+function kpImg(i, suffix, fail, later) {
+  const img = el('img', 'kph');
+  img.alt = '';
+  img.decoding = 'async';
+  img.style.objectPosition = kpFocus(i);
+  img.addEventListener('error', function () { if (fail) fail(img); });
+  if (later) img.dataset.src = kpSrc(i, suffix);
+  else {
+    img.loading = 'lazy';
+    img.src = kpSrc(i, suffix);
+  }
+  return img;
+}
+function kpLoad(img) {
+  if (img && img.dataset.src) {
+    img.src = img.dataset.src;
+    delete img.dataset.src;
+  }
+}
+
+// Фото поверх рисунка в той же рамке
+function photoOver(box, i, suffix) {
+  box.classList.add('has-photo');
+  box.insertBefore(kpImg(i, suffix, function (img) {
+    if (img.parentNode) img.parentNode.removeChild(img);
+    box.classList.remove('has-photo');
+  }), box.firstChild);
+  return box;
+}
+
+// Все фото по порядку списка, у каждого — первый кружок с этим фото (подпись в просмотре)
+function albumList() {
+  const out = KIDS_PHOTOS.f.map(function (f, i) { return { i: i, cat: null, item: null }; });
+  priceData.categories.forEach(function (cat) {
+    cat.items.forEach(function (item) {
+      clubPhotos(cat, item).forEach(function (i) {
+        if (!out[i].item) { out[i].cat = cat; out[i].item = item; }
+      });
+    });
+  });
+  return out.filter(function (x) { return x.item; });
+}
+
+// ── Рисунок кружка → фото ──
+const clubArtPlain = clubArt;
+clubArt = function (cat, item, cls) {
+  const box = clubArtPlain(cat, item, cls);
+  const list = clubPhotos(cat, item);
+  if (list.length && !/ill-hero/.test(cls)) photoOver(box, list[0], /ill-mini/.test(cls) ? '-m' : '-t');
+  return box;
+};
+
+// ── Листание: дорожка со «щелчком» по кадру, точки (если фото больше одного), стрелки (на компьютере) ──
+function kpSlider(list, suffix, onOpen) {
+  const wrap = el('div', 'kslider');
+  const track = el('div', 'kslides');
+  const dots = el('div', 'kdots');
+  dots.setAttribute('aria-hidden', 'true');
+  list.forEach(function (i) {
+    const b = el('button', 'kslide');
+    b.type = 'button';
+    b.appendChild(kpImg(i, suffix, function () { drop(b); }, true));
+    b.addEventListener('click', function () {
+      onOpen(slides().indexOf(b), slides().map(function (s) { return list[Array.prototype.indexOf.call(all, s)]; }));
+    });
+    track.appendChild(b);
+    dots.appendChild(el('span'));
+  });
+  const all = Array.prototype.slice.call(track.children);
+  wrap.appendChild(track);
+  const prev = iconButton('back', 'karrow kprev', t('photoPrev'), function () { go(-1); });
+  const next = iconButton('chev', 'karrow knext', t('photoNext'), function () { go(1); });
+  wrap.appendChild(prev);
+  wrap.appendChild(next);
+  wrap.appendChild(dots);
+  let cur = -1;
+  function slides() { return Array.prototype.slice.call(track.children); }
+  function pos() { return track.clientWidth ? Math.round(track.scrollLeft / track.clientWidth) : 0; }
+  function go(d) { track.scrollBy({ left: d * track.clientWidth, behavior: 'smooth' }); }
+  function show() {
+    const s = slides();
+    const k = Math.max(0, Math.min(s.length - 1, pos()));
+    // Загружаем текущее и соседнее фото — остальные, когда до них долистают
+    [k, k + 1].forEach(function (j) { if (s[j]) kpLoad(s[j].firstChild); });
+    if (k === cur) return;
+    cur = k;
+    Array.prototype.forEach.call(dots.children, function (d, j) { d.className = j === k ? 'on' : ''; });
+    s.forEach(function (b, j) { b.setAttribute('aria-label', fill(t('photoOf'), { n: j + 1, total: s.length })); });
+    prev.disabled = k === 0;
+    next.disabled = k === s.length - 1;
+  }
+  function drop(b) {
+    const j = slides().indexOf(b);
+    if (j === -1) return;
+    track.removeChild(b);
+    dots.removeChild(dots.children[j]);
+    cur = -1;
+    wrap.classList.toggle('one', track.children.length < 2);
+    if (!track.children.length) {
+      if (wrap.parentNode) wrap.parentNode.classList.remove('has-photo');
+      if (wrap.parentNode) wrap.parentNode.removeChild(wrap);
+    } else show();
+  }
+  wrap.classList.toggle('one', list.length < 2);
+  let raf = 0;
+  track.addEventListener('scroll', function () {
+    if (!raf) raf = requestAnimationFrame(function () { raf = 0; show(); });
+  }, { passive: true });
+  wrap.kpShow = show;
+  return wrap;
+}
+
+// ── Карточка кружка: фото крупно вверху, листание, нажатие — на весь экран ──
+const renderItemPlain = renderItem;
+renderItem = function (screen, cat, item, app) {
+  renderItemPlain(screen, cat, item, app);
+  const list = clubPhotos(cat, item);
+  const pic = screen.querySelector('.kpicbox');
+  if (!pic || !list.length) return;
+  pic.classList.add('has-photo');
+  // На весь экран — оставшиеся фото (не загрузившиеся убраны из листания)
+  const sl = kpSlider(list, '', function (k, left) {
+    openViewer(left.map(function (i) { return { i: i }; }), k);
+  });
+  pic.insertBefore(sl, pic.firstChild);
+  sl.kpShow();
+};
+
+// ── Главная: фото на плитках направлений, альбом после «Танымал» ──
+const renderKidsHomePlain = renderKidsHome;
+renderKidsHome = function (screen) {
+  renderKidsHomePlain(screen);
+  const cards = screen.querySelectorAll('.kdirs .cat-card');
+  priceData.categories.forEach(function (cat, j) {
+    const i = KIDS_PHOTOS.d[cat.id];
+    if (i === undefined || !cards[j]) return;
+    const box = el('span', 'kdph');
+    cards[j].insertBefore(box, cards[j].firstChild);
+    photoOver(box, i, '-t');
+    cards[j].classList.add('has-photo');
+    box.firstChild.addEventListener('error', function () { cards[j].classList.remove('has-photo'); });
+  });
+  // Плитки «Танымал» с фото — отметка на самой плитке (оформление текста поверх фото); фото не загрузилось — отметка снимается
+  Array.prototype.forEach.call(screen.querySelectorAll('.kclub'), function (c) {
+    const img = c.querySelector('.ill.has-photo > .kph');
+    if (!img) return;
+    c.classList.add('has-photo');
+    img.addEventListener('error', function () { c.classList.remove('has-photo'); });
+  });
+  const album = albumList();
+  if (!album.length) return;
+  const sec = el('section', 'ksec kalbum');
+  const head = el('div', 'ksec-head');
+  head.appendChild(el('h2', null, t('albumTitle')));
+  sec.appendChild(head);
+  const grid = el('div', 'kalb-grid');
+  album.slice(0, ALBUM_PREVIEW).forEach(function (x, k) {
+    const b = el('button', 'kalb-cell');
+    b.type = 'button';
+    b.setAttribute('aria-label', loc(x.item.name) + ' — ' + fill(t('photoOf'), { n: k + 1, total: album.length }));
+    b.appendChild(kpImg(x.i, '-t', function (img) { img.parentNode.removeChild(img); }));
+    b.addEventListener('click', function () { openViewer(album, k); });
+    grid.appendChild(b);
+  });
+  const all = el('a', 'kalb-all');
+  all.href = '#/photos';
+  all.appendChild(el('b', null, t('albumAll')));
+  all.appendChild(el('small', null, fill(t('albumCount'), { n: album.length })));
+  all.appendChild(svgNode(ICONS.chev));
+  grid.appendChild(all);
+  sec.appendChild(grid);
+  const trust = screen.querySelector('.ktrust');
+  const pop = screen.querySelector('.kpop');
+  const after = trust || (pop && pop.parentNode.nextSibling);
+  if (after) screen.insertBefore(sec, after); else screen.appendChild(sec);
+};
+
+// ── Экран #/photos: все фото кружков сеткой ──
+const parseRoutePhotos = parseRoute;
+parseRoute = function (hash) {
+  if (/^#\/?photos\/?$/.test(hash || '')) return { screen: 'photos', key: 'photos' };
+  return parseRoutePhotos(hash);
+};
+const renderHomePhotos = renderHome;
+renderHome = function (screen) {
+  if (!(currentRoute && currentRoute.screen === 'photos')) return renderHomePhotos(screen);
+  screen.classList.add('kids', 'kphotos');
+  screen.appendChild(backLink('#/', 'home', t('home')));
+  const album = albumList();
+  const h = el('div', 'kphotos-head');
+  h.appendChild(el('h1', null, t('albumTitle')));
+  h.appendChild(el('p', null, fill(t('albumCount'), { n: album.length })));
+  screen.appendChild(h);
+  const grid = el('div', 'kphotos-grid');
+  album.forEach(function (x, k) {
+    const b = stagger(el('button', 'kalb-cell'), k);
+    b.type = 'button';
+    b.setAttribute('aria-label', loc(x.item.name) + ' — ' + fill(t('photoOf'), { n: k + 1, total: album.length }));
+    b.appendChild(kpImg(x.i, '-t', function (img) { img.parentNode.removeChild(img); }));
+    b.addEventListener('click', function () { openViewer(album, k); });
+    grid.appendChild(b);
+  });
+  screen.appendChild(grid);
+  document.title = t('albumTitle') + ' · ' + company.name;
+};
+
+// ── Просмотр на весь экран: листание, крестик, Esc, свайп вниз, системная «Назад»; в альбоме — подпись-ссылка на кружок ──
+let kViewer = null;
+let kViewerOpener = null;
+let kViewerThen = null;
+
+function openViewer(list, start) {
+  if (kViewer || !list.length) return;
+  kViewerOpener = document.activeElement;
+  const box = el('div', 'kview');
+  box.setAttribute('role', 'dialog');
+  box.setAttribute('aria-modal', 'true');
+  box.setAttribute('aria-label', t('albumTitle'));
+  const stage = el('div', 'kv-stage');
+  const track = el('div', 'kv-track');
+  list.forEach(function (x) {
+    const s = el('div', 'kv-slide');
+    const img = kpImg(x.i, '', function (im) { im.classList.add('is-broken'); }, true);
+    img.className = 'kv-img';
+    img.style.objectPosition = '';
+    s.appendChild(img);
+    track.appendChild(s);
+  });
+  stage.appendChild(track);
+  box.appendChild(stage);
+  const top = el('div', 'kv-top');
+  const count = el('span', 'kv-count num');
+  top.appendChild(count);
+  const close = iconButton('close', 'kv-close', t('close'), function () { closeViewer(); });
+  top.appendChild(close);
+  box.appendChild(top);
+  const prev = iconButton('back', 'karrow kprev', t('photoPrev'), function () { go(-1); });
+  const next = iconButton('chev', 'karrow knext', t('photoNext'), function () { go(1); });
+  box.appendChild(prev);
+  box.appendChild(next);
+  const cap = el('a', 'kv-cap');
+  const capName = el('span');
+  cap.appendChild(capName);
+  cap.appendChild(svgNode(ICONS.chev));
+  cap.addEventListener('click', function (e) {
+    e.preventDefault();
+    const href = cap.getAttribute('href');
+    closeViewer(false, function () { location.hash = href; });
+  });
+  box.appendChild(cap);
+  let cur = -1;
+  function pos() { return track.clientWidth ? Math.round(track.scrollLeft / track.clientWidth) : 0; }
+  function go(d) { track.scrollBy({ left: d * track.clientWidth, behavior: 'smooth' }); }
+  function show() {
+    const k = Math.max(0, Math.min(list.length - 1, pos()));
+    [k - 1, k, k + 1].forEach(function (j) { if (track.children[j]) kpLoad(track.children[j].firstChild); });
+    if (k === cur) return;
+    cur = k;
+    count.textContent = fill(t('photoOf'), { n: k + 1, total: list.length });
+    prev.disabled = k === 0;
+    next.disabled = k === list.length - 1;
+    const x = list[k];
+    cap.hidden = !x.item;
+    if (x.item) {
+      cap.href = itemHash(x.cat, x.item);
+      capName.textContent = loc(x.item.name);
+    }
+  }
+  box.classList.toggle('one', list.length < 2);
+  let raf = 0;
+  track.addEventListener('scroll', function () {
+    if (!raf) raf = requestAnimationFrame(function () { raf = 0; show(); });
+  }, { passive: true });
+  // Свайп вниз — закрыть (фото уезжает вслед за пальцем)
+  let sy = null, sx = 0, dy = 0;
+  stage.addEventListener('touchstart', function (e) {
+    if (e.touches.length !== 1) { sy = null; return; }
+    sy = e.touches[0].clientY;
+    sx = e.touches[0].clientX;
+    dy = 0;
+  }, { passive: true });
+  stage.addEventListener('touchmove', function (e) {
+    if (sy === null) return;
+    const ddy = e.touches[0].clientY - sy, ddx = e.touches[0].clientX - sx;
+    if (dy === 0 && Math.abs(ddx) > Math.abs(ddy)) { sy = null; return; }
+    dy = Math.max(0, ddy);
+    stage.style.transform = 'translateY(' + dy + 'px)';
+    box.style.setProperty('--kv-fade', String(Math.max(0.3, 1 - dy / 400)));
+  }, { passive: true });
+  stage.addEventListener('touchend', function () {
+    if (sy === null) return;
+    sy = null;
+    if (dy > 90) closeViewer();
+    else {
+      stage.style.transform = '';
+      box.style.removeProperty('--kv-fade');
+    }
+  });
+  box.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' || e.key === 'Esc') {
+      e.preventDefault();
+      closeViewer();
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      go(e.key === 'ArrowLeft' ? -1 : 1);
+    } else if (e.key === 'Tab') {
+      const items = Array.prototype.filter.call(box.querySelectorAll('button, [href]'), function (n) { return !n.disabled && !n.hidden; });
+      const first = items[0], last = items[items.length - 1];
+      if (e.shiftKey ? document.activeElement === first : document.activeElement === last) {
+        e.preventDefault();
+        (e.shiftKey ? last : first).focus();
+      }
+    }
+  });
+  document.body.appendChild(box);
+  kViewer = box;
+  document.getElementById('app').setAttribute('aria-hidden', 'true');
+  document.documentElement.style.overflow = 'hidden';
+  track.scrollLeft = (start || 0) * track.clientWidth;
+  show();
+  try { history.pushState({ idx: currentIdx, kview: true }, ''); } catch (e) { /* без записи «Назад» не закроет окно */ }
+  close.focus({ preventScroll: true });
+}
+
+// fromHistory — окно закрыла системная «Назад»; then — что сделать после закрытия (переход к кружку из подписи)
+function closeViewer(fromHistory, then) {
+  if (!kViewer) return;
+  if (then) kViewerThen = then;
+  if (!fromHistory && history.state && history.state.kview) {
+    history.back(); // окно закроется в обработчике popstate
+    return;
+  }
+  kViewer.parentNode.removeChild(kViewer);
+  kViewer = null;
+  document.getElementById('app').removeAttribute('aria-hidden');
+  document.documentElement.style.overflow = '';
+  const after = kViewerThen;
+  kViewerThen = null;
+  if (after) after();
+  else if (kViewerOpener && document.contains(kViewerOpener)) kViewerOpener.focus({ preventScroll: true });
+  kViewerOpener = null;
+}
+
+window.addEventListener('popstate', function () {
+  if (kViewer && !(history.state && history.state.kview)) closeViewer(true);
+});
+document.addEventListener('focusin', function (e) {
+  if (kViewer && !kViewer.contains(e.target)) {
+    const c = kViewer.querySelector('.kv-close');
+    if (c) c.focus();
+  }
+});
+// Страницу перезагрузили с открытым просмотром — убрать лишнюю запись истории (как у окна QR)
+if (history.state && history.state.kview) history.back();
 
 init();
 </script>
