@@ -739,6 +739,9 @@
     font-size: 13px; font-weight: 800; gap: 7px; white-space: nowrap; max-width: 100%;
   }
   .khero .hours .status.is-closed, .khero .hours .status.is-break { color: var(--hero-text-2); }
+  /* Дни без «Ашық / Жабық» (company.hoursNoStatus) — нейтральная надпись без цветной точки */
+  .khero .hours .status.is-neutral { color: var(--hero-text); }
+  .khero .hours .status.is-neutral::before { display: none; }
   .khero .hours-panel { margin: 8px 0 0; color: var(--text); max-width: none; }
   .kacts { display: grid; grid-template-columns: 1.15fr 1fr 1fr; gap: 8px; margin-top: 12px; }
   .kact {
@@ -909,6 +912,8 @@
     padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); pointer-events: auto;
     background: var(--hero-bg); color: var(--hero-text); box-shadow: var(--shadow); border-radius: 18px 18px 0 0;
   }
+  /* «Юбка» вниз того же цвета: если браузер (Android, адресная строка) оставит щель под панелью — она зелёная, не фон страницы */
+  .kbar.book-bar::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 100vh; background: var(--hero-bg); pointer-events: none; }
   .kbar-in { max-width: 480px; margin: 0 auto; display: flex; gap: 10px; align-items: center; padding: 10px 12px; }
   .kbar .grow { flex: 1; min-width: 0; }
   .kbar .grow b { display: block; font-size: 14px; font-weight: 800; }
@@ -968,6 +973,7 @@
   .kwn { font-size: 12.5px; font-weight: 800; line-height: 1.1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .kwc { height: 34px; border-radius: 9px; background: var(--surface-2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; overflow: hidden; }
   .kwc.on { background: var(--tile-bg); color: var(--tile-text); border: 1.5px solid var(--gold); }
+  .kwc.on.one { border-style: dashed; }
   .ktotal { margin-top: 16px; padding: 14px 16px; border-radius: var(--radius); border: 1.5px solid var(--gold); background: var(--surface); }
   .ktotal .ln { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
   .ktotal .ln + .ln { margin-top: 6px; }
@@ -1131,7 +1137,7 @@ const priceData = {
     defaultLang: "kk",
     type: "kids",
     version: "1.0.0",
-    updatedAt: "2026-10-21",
+    updatedAt: "2026-10-22",
     share: {
       title: "Jūldyzdar Akademiasy — үйірмелер мен бағалар",
       description: "Балалар даму орталығы, Алматы: үйірмелер, бағалар, кесте · Детский центр развития: кружки, цены, расписание",
@@ -1153,6 +1159,7 @@ const priceData = {
     mapLink: "https://2gis.kz/almaty/firm/70000001069934569",
     timezone: "Asia/Almaty",
     // [?] Режим работы центра неизвестен — по расписанию занятий (пятница 08:00–21:00), воскресенье — без занятий
+    // (ответ центра 22.10, вопрос 10: в Сб и Вс «Открыто / Закрыто» не писать — hoursNoStatus; часы будних дней не менялись)
     hours: {
       week: {
         mon: { open: "08:00", close: "21:00" },
@@ -1165,6 +1172,8 @@ const priceData = {
       },
       exceptions: []
     },
+    // Дни без «Открыто / Закрыто» в шапке; в списке режима работы — «По расписанию / Кесте бойынша»
+    hoursNoStatus: ["sat", "sun"],
     // Пробное занятие: enabled — показывать баннер и кнопку; free: true — без цены в заголовке (или price: 3000); note — пометка.
     // Центр не подтвердил, что пробное без оплаты: заголовок trialTitleFree — просто «Пробное занятие» / «Сынақ сабағы» (19.4).
     trial: { enabled: true, free: true, note: { ru: "[?] уточняется", kk: "[?] нақтыланады" } },
@@ -1320,7 +1329,7 @@ const priceData = {
       modeMonth: "Абонемент",
       modeSingle: "Разово",
       totalSingle: "Разовые: {list}",
-      msgSingle: "разовое занятие — {price}",
+      msgSingle: "разовое занятие — {when} — {price}",
       timeIndividual: "Время назначается индивидуально",
       daysTimeIndividual: "{days}: время назначается индивидуально",
       ageFor: "для {range} лет",
@@ -1328,6 +1337,11 @@ const priceData = {
       dirsAge: "{title} · {age}",
       countAge: "{count} {age}",
       ageReset: "Сбросить возраст",
+      // ── разовое — одно занятие (день и время), дни без «Открыто / Закрыто» (company.hoursNoStatus) ──
+      singleDay: "День",
+      singleTime: "Время",
+      weekSingle: "+ разовых: {n}",
+      bySchedule: "По расписанию",
       // ── фото кружков (engine/kids/photos.js, settings.clubPhotos) ──
       albumTitle: "Наш центр",
       albumAll: "Все фото",
@@ -1470,7 +1484,7 @@ const priceData = {
       modeMonth: "Абонемент",
       modeSingle: "Бір рет",
       totalSingle: "Бір реттік: {list}",
-      msgSingle: "бір реттік сабақ — {price}",
+      msgSingle: "бір реттік сабақ — {when} — {price}",
       timeIndividual: "Уақыты жеке белгіленеді",
       daysTimeIndividual: "{days}: уақыты жеке белгіленеді",
       ageFor: "{range} жасқа",
@@ -1478,6 +1492,11 @@ const priceData = {
       dirsAge: "{title} · {age}",
       countAge: "{age}: {count}",
       ageReset: "Жасты тазалау",
+      // ── разовое — одно занятие (день и время), дни без «Открыто / Закрыто» (company.hoursNoStatus) ──
+      singleDay: "Күні",
+      singleTime: "Уақыты",
+      weekSingle: "+ {n} бір реттік",
+      bySchedule: "Кесте бойынша",
       // ── фото кружков (engine/kids/photos.js, settings.clubPhotos) ──
       albumTitle: "Біздің орталық",
       albumAll: "Барлық фото",
@@ -1540,23 +1559,26 @@ const priceData = {
           illustration: "kids-english",
           name: { ru: "Английский язык", kk: "Ағылшын тілі" },
           age: [6, 16], duration: [60, 90], perWeek: 3, hit: true,
-          price: { amount: 25000, unit: "month" },
-          // Расписание центра 20.10.2026: Пн/Ср/Пт по 1 ч (3 раза) или Вт/Чт по 1,5 ч (2 раза); «4 күн» прайса — так не выходит, вопрос центру.
-          // Вт/Чт 15:00–16:30 в новом расписании нет. Цена — прежняя
+          price: { amount: 25000, unit: "month", single: 3500 },
+          // Расписание центра 20.10.2026: Пн/Ср/Пт по 1 ч (3 раза) или Вт/Чт по 1,5 ч (2 раза). Ответ центра 22.10: Вт/Чт 15:00–16:30 убрана,
+          // 25 000 ₸ для обоих вариантов, разовое 3 500 ₸; каждую субботу speaking 10:00–11:00, 11:00–12:00 — по решению владельца
+          // группа английского, 3 500 ₸ за посещение, без абонемента (вопрос центру — otchet-centru-2026-10-21.md)
           groups: [
             { id: "mwf", name: { ru: "Пн · Ср · Пт", kk: "Дс · Ср · Жм" }, duration: 60, perWeek: 3,
               schedule: { mon: ["09:00–10:00", "10:00–11:00", "11:00–12:00", "14:00–15:00", "15:00–16:00", "16:00–17:00", "17:00–18:00"],
                 wed: ["09:00–10:00", "10:00–11:00", "11:00–12:00", "14:00–15:00", "15:00–16:00", "16:00–17:00", "17:00–18:00"],
                 fri: ["09:00–10:00", "10:00–11:00", "11:00–12:00", "14:00–15:00", "15:00–16:00", "16:00–17:00", "17:00–18:00"] } },
             { id: "tt", name: { ru: "Вт · Чт", kk: "Сс · Бс" }, duration: 90, perWeek: 2,
-              schedule: { tue: ["09:00–10:30", "10:30–12:00"], thu: ["09:00–10:30", "10:30–12:00"] } }
+              schedule: { tue: ["09:00–10:30", "10:30–12:00"], thu: ["09:00–10:30", "10:30–12:00"] } },
+            { id: "sat", name: { ru: "Speaking · Сб", kk: "Speaking · Сб" }, duration: 60, perWeek: 1, price: { amount: 3500, unit: "lesson" },
+              schedule: { sat: ["10:00–11:00", "11:00–12:00"] } }
           ]
         },
         {
           id: "math",
           name: { ru: "Математика", kk: "Математика" },
           age: [6, 16], duration: 90, perWeek: 2,
-          // Расписание центра 20.10.2026: Сб и Вс 14:00–15:30 (1,5 ч; раньше 1 ч 3 раза). Цена — прежняя, вопрос центру
+          // Расписание центра 20.10.2026: Сб и Вс 14:00–15:30 (1,5 ч). Ответ центра 22.10: 25 000 ₸, дни верны
           price: { amount: 25000, unit: "month" },
           schedule: { sat: ["14:00–15:30"], sun: ["14:00–15:30"] }
         },
@@ -1565,9 +1587,9 @@ const priceData = {
           name: { ru: "Логопед (группа)", kk: "Логопед (топ)" },
           age: [3, 16], duration: 40, perWeek: 3,
           price: { amount: 48000, unit: "month" },
-          // Расписание центра 20.10.2026 («топтық сабақ, 40 минут»); 3-я группа 19:50–20:25 — 35 мин, так у центра
-          schedule: { mon: ["18:30–19:10", "19:10–19:50", "19:50–20:25"], wed: ["18:30–19:10", "19:10–19:50", "19:50–20:25"],
-            fri: ["18:30–19:10", "19:10–19:50", "19:50–20:25"] }
+          // Расписание центра 20.10.2026 («топтық сабақ, 40 минут»); ответ 22.10: 3-я группа 19:50–20:30 (40 мин)
+          schedule: { mon: ["18:30–19:10", "19:10–19:50", "19:50–20:30"], wed: ["18:30–19:10", "19:10–19:50", "19:50–20:30"],
+            fri: ["18:30–19:10", "19:10–19:50", "19:50–20:30"] }
         },
         {
           id: "logo",
@@ -1581,8 +1603,9 @@ const priceData = {
           id: "logomassage",
           name: { ru: "Логомассаж", kk: "Логомассаж" },
           age: [3, 16], duration: 30, perWeek: 0,
-          price: { amount: 7000, unit: "lesson" }
-          // [?] Расписания нет — по записи
+          price: { amount: 7000, unit: "lesson" },
+          // Ответ центра 22.10: «уақыты жеке белгіленеді» — дней нет, schedule: {} → «Время назначается индивидуально»
+          schedule: {}
         }
       ]
     },
@@ -1597,7 +1620,7 @@ const priceData = {
           illustration: "kids-karate",
           name: { ru: "Каратэ", kk: "Каратэ" },
           age: [4, 16], duration: 60, perWeek: 3, hit: true,
-          // Расписание центра 20.10.2026; «Суббота общая тренировка 9.00» — длительность не дана, поставлен 1 ч (вопрос центру)
+          // Расписание центра 20.10.2026; ответ 22.10: суббота — общая тренировка 09:00–10:00, 1 час
           price: { amount: 20000, unit: "month", single: 2500 },
           schedule: { tue: ["18:00–19:00", "19:00–20:00", "20:00–21:00"], thu: ["18:00–19:00", "19:00–20:00", "20:00–21:00"], sat: ["09:00–10:00"] }
         },
@@ -1614,8 +1637,9 @@ const priceData = {
           id: "robot",
           illustration: "kids-robot",
           name: { ru: "Робототехника", kk: "Робототехника" },
-          age: [4, 16], duration: 75, perWeek: 2, hit: true,   // [?] в прайсе «1,15 сағат» — 1 ч 15 мин по сторис
-          price: { amount: 20000, unit: "month" },
+          age: [4, 16], duration: 75, perWeek: 2, hit: true,   // 1 ч 15 мин (ответ центра 22.10: 11:00–12:15 …)
+          // Ответ центра 22.10: Вт·Чт 11:00–12:15, 16:30–17:45, 18:15–19:30, 20 000 ₸, разовое 3 500 ₸
+          price: { amount: 20000, unit: "month", single: 3500 },
           schedule: { tue: ["11:00–12:15", "16:30–17:45", "18:15–19:30"], thu: ["11:00–12:15", "16:30–17:45", "18:15–19:30"] }
         }
       ]
@@ -1631,7 +1655,7 @@ const priceData = {
           name: { ru: "Детские танцы", kk: "Балалар биі" },
           age: [3, 9], duration: 60, perWeek: 3,
           price: { amount: 20000, unit: "month" },
-          // Расписание центра 20.10.2026: группы 3–5 и 6–9 лет, время новое; ДНИ НЕ УКАЗАНЫ — оставлены прежние Пн·Ср·Пт (вопрос центру)
+          // Расписание центра 20.10.2026: группы 3–5 и 6–9 лет; ответ 22.10: дни Пн·Ср·Пт, 20 000 ₸, разового нет
           groups: [
             { id: "3-5", name: { ru: "3–5 лет", kk: "3–5 жас" }, age: [3, 5],
               schedule: { mon: ["18:00–19:00", "19:00–20:00"], wed: ["18:00–19:00", "19:00–20:00"], fri: ["18:00–19:00", "19:00–20:00"] } },
@@ -1643,7 +1667,7 @@ const priceData = {
           id: "teen-dance",
           name: { ru: "Танцы для подростков", kk: "Жасөспірімдер биі" },
           age: [10, 17], duration: 60, perWeek: 3,
-          // Новый кружок (расписание центра 20.10.2026). Цены нет — прежняя цена детских танцев из прайса («Балалар биі 4–16»), уточнить
+          // Новый кружок (расписание центра 20.10.2026); ответ 22.10: Пн·Ср·Пт 10–11, 16–17, 20 000 ₸, разового нет
           price: { amount: 20000, unit: "month" },
           schedule: { mon: ["10:00–11:00", "16:00–17:00"], wed: ["10:00–11:00", "16:00–17:00"], fri: ["10:00–11:00", "16:00–17:00"] }
         },
@@ -3156,10 +3180,12 @@ function priceOf(item, gid) { const g = groupOf(item, gid); return (g && g.price
 function durOf(item, gid) { const g = groupOf(item, gid); return g && g.duration !== undefined ? g.duration : item.duration; }
 function perWeekOf(item, gid) { const g = groupOf(item, gid); return g && g.perWeek !== undefined ? g.perWeek : item.perWeek; }
 function unitShort(p) { return t(p.unit === 'lesson' ? 'lessonShort' : 'monthShort'); }
-// Без группы (списки, плитки): у групп разные цены — «от» самой меньшей; с группой — цена группы
+// Без группы (списки, плитки): у групп разные цены — «от» самой меньшей; с группой — цена группы.
+// В «от» — только группы с той же единицей, что у кружка (группа «за занятие» у кружка-абонемента не входит)
 function priceText(item, gid) {
   if (gid === undefined) {
-    const ps = (item.groups || []).map(function (g) { return (g.price || item.price).amount; });
+    const ps = (item.groups || []).map(function (g) { return g.price || item.price; })
+      .filter(function (p) { return p.unit === item.price.unit; }).map(function (p) { return p.amount; });
     if (ps.some(function (a) { return a !== ps[0]; })) return fill(t('priceFrom'), { price: formatAmount(Math.min.apply(null, ps)) + unitShort(item.price) });
   }
   const p = priceOf(item, gid);
@@ -3281,9 +3307,31 @@ function defaultSlots(item, gid) {
   return out;
 }
 
+// Разово — одно занятие: день из дней кружка (и дни без часов), по умолчанию ближайший от сегодня (сегодня тоже)
+function classDays(item, gid) {
+  const sch = scheduleOf(item, gid);
+  return KDAYS.filter(function (d) { return Array.isArray(sch[d]); });
+}
+function nearestDay(item, gid) {
+  const ds = classDays(item, gid);
+  const today = salonClock(new Date()).day - 1;
+  for (let i = 0; i < 7; i++) if (ds.indexOf(KDAYS[(today + i) % 7]) !== -1) return KDAYS[(today + i) % 7];
+  return '';
+}
+// Разовое на день d: время keep, если оно есть в этом дне, иначе первое; у дня без часов — без времени
+function singlePick(e, item, d, keep) {
+  const list = (d && scheduleOf(item, e.g)[d]) || [];
+  e.slots = {};
+  if (!d) { delete e.d; return; }
+  e.d = d;
+  if (list.length) e.slots[d] = list.indexOf(keep) !== -1 ? keep : list[0];
+}
+// Кружок без дней: schedule: {} — «время назначается индивидуально», нет schedule — «расписание уточняйте»
+function noDaysText(item) { return t(item.schedule && !Object.keys(item.schedule).length ? 'timeIndividual' : 'noSchedule'); }
+
 // ─────────── Программа ребёнка ───────────
 // { cur: номер ребёнка, kids: [{ name, age, trial, items: [{ c: направление, i: кружок, g: группа, slots: { mon: "09:00–10:00" },
-//   m: "single" — разово (только у кружка с price.single; нет — абонемент) }] }] }
+//   m: "single" — разово (только у кружка с price.single; нет — абонемент), d: день разового (slots — не больше одного, этого дня) }] }] }
 // Цены не хранятся — всегда из текущих данных; кружки, которых больше нет, пропадают.
 function findClub(c, i) {
   const cat = findById(priceData.categories, c);
@@ -3313,7 +3361,12 @@ function loadProgram() {
           KDAYS.forEach(function (d) { if (sch[d] && sch[d].indexOf(e.slots[d]) !== -1) slots[d] = e.slots[d]; });
         }
         const item = { c: e.c, i: e.i, g: g ? g.id : '', slots: slots };
-        if (e.m === 'single' && priceOf(r.item, item.g).single) item.m = 'single';
+        // Разово — один день: сохранённый, если он есть у кружка; старая запись (все дни) — ближайший день и его время из неё
+        if (e.m === 'single' && priceOf(r.item, item.g).single) {
+          item.m = 'single';
+          const d = typeof e.d === 'string' && Array.isArray(sch[e.d]) ? e.d : nearestDay(r.item, item.g);
+          singlePick(item, r.item, d, slots[d]);
+        }
         kid.items.push(item);
       });
       out.kids.push(kid);
@@ -3396,11 +3449,19 @@ function programMessage() {
   programLines(kid).forEach(function (l, i) {
     const g = (l.item.groups || []).length ? findGroup(l.item, l.e.g) : null;
     const parts = [];
-    const times = slotsText(l.item, l.e);
-    if (times) parts.push(times);
-    const indiv = indivText(l.item, l.e.g, ', ');
-    if (indiv) parts.push(indiv);
-    parts.push(isSingle(l) ? fill(t('msgSingle'), { price: formatAmount(priceOf(l.item, l.e.g).single) }) : priceText(l.item, l.e.g));
+    if (isSingle(l)) {
+      // «Каратэ — бір реттік сабақ — Сс 18:00–19:00 — 2 500 ₸»; день без часов — «Сб: уақыты жеке белгіленеді»
+      const dn = l.e.d ? t('daysShort')[KDAYS.indexOf(l.e.d)] : '';
+      const when = !dn ? noDaysText(l.item) : l.e.slots[l.e.d] ? dn + ' ' + l.e.slots[l.e.d] : fill(t('daysTimeIndividual'), { days: dn });
+      parts.push(fill(t('msgSingle'), { when: when, price: formatAmount(priceOf(l.item, l.e.g).single) }));
+    } else {
+      const times = slotsText(l.item, l.e);
+      if (times) parts.push(times);
+      const indiv = indivText(l.item, l.e.g, ', ');
+      if (indiv) parts.push(indiv);
+      if (!classDays(l.item, l.e.g).length && l.item.schedule) parts.push(noDaysText(l.item));
+      parts.push(priceText(l.item, l.e.g));
+    }
     out.push(fill(t('msgLine'), { n: i + 1, name: loc(l.item.name) + (g ? ' (' + t('group') + ' ' + loc(g.name) + ')' : ''), details: parts.join(' — ') }));
   });
   if (TRIAL) out.push(t(kid.trial ? 'msgTrialYes' : 'msgTrialNo'));
@@ -3757,7 +3818,7 @@ function scheduleBlock(cat, item) {
   // День с занятиями — есть время или день без часов ([] — время индивидуально)
   const has = KDAYS.map(function (d) { return Array.isArray(sch[d]); });
   if (!has.some(Boolean)) {
-    box.appendChild(el('p', 'knote', t('noSchedule')));
+    box.appendChild(el('p', 'knote', noDaysText(item)));
     return box;
   }
   if ((item.groups || []).length > 1) {
@@ -3938,6 +3999,7 @@ function programItem(kid, l, i) {
         l.e.g = gr.id;
         l.e.slots = defaultSlots(l.item, gr.id);
         if (!priceOf(l.item, gr.id).single) delete l.e.m;
+        if (l.e.m) singlePick(l.e, l.item, nearestDay(l.item, gr.id)); else delete l.e.d;
         saveProgram();
         redraw();
       });
@@ -3956,7 +4018,16 @@ function programItem(kid, l, i) {
       b.setAttribute('aria-pressed', (l.e.m || '') === m[0] ? 'true' : 'false');
       b.addEventListener('click', function () {
         if ((l.e.m || '') === m[0]) return;
-        if (m[0]) l.e.m = m[0]; else delete l.e.m;
+        // Абонемент → Бір рет: группа та же, ближайший день; обратно — дни по умолчанию
+        if (m[0]) {
+          l.e.m = m[0];
+          const d = nearestDay(l.item, l.e.g);
+          singlePick(l.e, l.item, d, l.e.slots[d]);
+        } else {
+          delete l.e.m;
+          delete l.e.d;
+          l.e.slots = defaultSlots(l.item, l.e.g);
+        }
         saveProgram();
         redraw();
       });
@@ -3964,8 +4035,57 @@ function programItem(kid, l, i) {
     });
     box.appendChild(ms);
   }
-  // Время по дням: «—» — в этот день не ходит; дни без часов — одной строкой «Сс · Сб: уақыты жеке белгіленеді»
   const sch = scheduleOf(l.item, l.e.g);
+  // Бір рет — одно занятие: «Күні» (дни кружка) и «Уақыты» этого дня; день без часов — «уақыты жеке белгіленеді»
+  if (isSingle(l)) {
+    const ds = classDays(l.item, l.e.g);
+    if (!ds.length) {
+      box.appendChild(el('p', 'knote', noDaysText(l.item)));
+      return box;
+    }
+    const grid = el('div', 'ktimes');
+    const dayLab = el('label');
+    dayLab.appendChild(el('span', null, t('singleDay')));
+    const dsel = el('select');
+    dsel.setAttribute('aria-label', loc(l.item.name) + ', ' + t('singleDay'));
+    ds.forEach(function (d) {
+      const o = el('option', null, t('daysShort')[KDAYS.indexOf(d)]);
+      o.value = d;
+      if (d === l.e.d) o.selected = true;
+      dsel.appendChild(o);
+    });
+    dsel.addEventListener('change', function () {
+      singlePick(l.e, l.item, dsel.value, l.e.slots[l.e.d]);
+      saveProgram();
+      redraw();
+    });
+    dayLab.appendChild(dsel);
+    grid.appendChild(dayLab);
+    const list = sch[l.e.d] || [];
+    if (list.length) {
+      const timeLab = el('label');
+      timeLab.appendChild(el('span', null, t('singleTime')));
+      const tsel = el('select');
+      tsel.setAttribute('aria-label', loc(l.item.name) + ', ' + t('singleTime'));
+      list.forEach(function (s) {
+        const o = el('option', null, s);
+        o.value = s;
+        if (l.e.slots[l.e.d] === s) o.selected = true;
+        tsel.appendChild(o);
+      });
+      tsel.addEventListener('change', function () {
+        singlePick(l.e, l.item, l.e.d, tsel.value);
+        saveProgram();
+        redraw();
+      });
+      timeLab.appendChild(tsel);
+      grid.appendChild(timeLab);
+    }
+    box.appendChild(grid);
+    if (!list.length) box.appendChild(el('p', 'knote', t('timeIndividual')));
+    return box;
+  }
+  // Время по дням: «—» — в этот день не ходит; дни без часов — одной строкой «Сс · Сб: уақыты жеке белгіленеді»
   const days = KDAYS.filter(function (d) { return sch[d] && sch[d].length; });
   const indiv = indivText(l.item, l.e.g, ' · ');
   if (indiv) box.appendChild(el('p', 'knote', indiv));
@@ -3994,7 +4114,7 @@ function programItem(kid, l, i) {
     const n = Object.keys(l.e.slots).length;
     const pw = perWeekOf(l.item, l.e.g);
     if (pw > 0 && n !== pw) box.appendChild(el('p', 'knote', fill(t('perWeekNote'), { times: timesText(pw) })));
-  } else if (!indiv) box.appendChild(el('p', 'knote', t('noSchedule')));
+  } else if (!indiv) box.appendChild(el('p', 'knote', noDaysText(l.item)));
   return box;
 }
 
@@ -4005,9 +4125,11 @@ function weekGrid(lines) {
   const head = el('div', 'kwrow');
   head.style.setProperty('--n', shown);
   head.appendChild(el('span'));
-  let lessons = 0;
+  let lessons = 0, singles = 0;
+  // Разовое — одна ячейка (пунктир), у дня без часов — без времени; в «Аптасына N сабақ» не входит
+  const on = function (l, d) { return !!l.e.slots[d] || (isSingle(l) && l.e.d === d); };
   days.forEach(function (name, i) {
-    const busy = lines.some(function (l) { return l.e.slots[KDAYS[i]]; });
+    const busy = lines.some(function (l) { return on(l, KDAYS[i]); });
     head.appendChild(el('span', 'kwh' + (busy ? ' busy' : ''), name));
   });
   box.appendChild(head);
@@ -4015,14 +4137,16 @@ function weekGrid(lines) {
     const row = el('div', 'kwrow ' + tint(l.cat));
     row.style.setProperty('--n', shown);
     row.appendChild(el('span', 'kwn', loc(l.item.name)));
+    const one = isSingle(l);
     days.forEach(function (name, i) {
       const s = l.e.slots[KDAYS[i]];
-      if (s) lessons++;
-      row.appendChild(el('span', 'kwc num' + (s ? ' on' : ''), s ? slotStart(s) : ''));
+      const o = on(l, KDAYS[i]);
+      if (o && one) singles++; else if (o) lessons++;
+      row.appendChild(el('span', 'kwc num' + (o ? ' on' : '') + (o && one ? ' one' : ''), s ? slotStart(s) : ''));
     });
     box.appendChild(row);
   });
-  return { box: box, lessons: lessons };
+  return { box: box, lessons: lessons, singles: singles };
 }
 
 function renderProgram(screen, app) {
@@ -4127,7 +4251,7 @@ function renderProgram(screen, app) {
   week.appendChild(wh);
   const wg = weekGrid(lines);
   week.appendChild(wg.box);
-  week.appendChild(el('p', 'knote', fill(t('weekBusy'), { n: wg.lessons })));
+  week.appendChild(el('p', 'knote', fill(t('weekBusy'), { n: wg.lessons }) + (wg.singles ? ' ' + fill(t('weekSingle'), { n: wg.singles }) : '')));
   screen.appendChild(week);
 
   const tot = programTotals(program.cur);
@@ -4227,10 +4351,24 @@ render = function (route, direction) {
 };
 
 // Заголовок панели режима работы: «Жұмыс уақыты» (слово «Кесте» у детского центра — расписание кружка)
+// Дни без «Ашық / Жабық» (company.hoursNoStatus: ["sat", "sun"]): в шапке — нейтральное «Жұмыс уақыты», в списке — «Кесте бойынша»
+const HOURS_NO_STATUS = Array.isArray(company.hoursNoStatus) ? company.hoursNoStatus : [];
 const fillHoursPanelSalon = fillHoursPanel;
 fillHoursPanel = function (panel, date) {
   fillHoursPanelSalon(panel, date);
   if (panel.firstChild) panel.firstChild.textContent = t('hoursTitle');
+  Array.prototype.forEach.call(panel.querySelectorAll('.week li'), function (li, i) {
+    const box = li.querySelector('.dtime');
+    if (!box || HOURS_NO_STATUS.indexOf(KDAYS[i]) === -1) return;
+    box.textContent = '';
+    box.appendChild(el('span', null, t('bySchedule')));
+  });
+};
+const workStatusSalon = workStatus;
+workStatus = function (date) {
+  const st = workStatusSalon(date);
+  if (st && HOURS_NO_STATUS.indexOf(KDAYS[salonClock(date).day - 1]) !== -1) return { state: 'neutral', text: t('hoursTitle') };
+  return st;
 };
 
 // ─────────── Фото кружков (settings.clubPhotos: true) ───────────
